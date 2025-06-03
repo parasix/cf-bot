@@ -485,7 +485,7 @@ const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=1
     
     await sendPhoto(chatId, qrUrl, {
   caption: '𝗦𝗰𝗮𝗻 𝗱𝗶 𝗮𝗽𝗽 𝘃2𝗿𝗮𝘆𝗡𝗚, 𝗚𝗮𝘁𝗰𝗵𝗮𝗡𝗚, 𝗱𝘀𝘁',  // atau caption informatif
-  parse_mode: 'MarkdownV2'
+  parse_mode: 'Markdown'
 });
 
 const config = `
@@ -531,13 +531,13 @@ proxies:
 ╰━━━━━━━━━━━━━━━━━━━━━╯
 `;
 
-    return sendMessage(chatId, config, messageId, { parse_mode: "MarkdownV2"
+    return sendMessage(chatId, config, messageId, { parse_mode: "Markdown"
     });
 
   } catch (error) {
     console.error("generateConfigWithBug ERROR:", error);
     return sendMessage(chatId, `❌ Gagal membuat konfigurasi:\n\`\`\`\n${error.message}\n\`\`\``, {
-      parse_mode: "MarkdownV2"
+      parse_mode: "Markdown"
     });
   }
 }
