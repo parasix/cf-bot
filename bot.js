@@ -55,23 +55,25 @@ async function checkProxy(proxy) {
 }
 
 // Fungsi untuk memeriksa status proxy berdasarkan input pengguna (ip:port)
-async function checkProxyByUserInput(chatId, userInput, replyToMessageId = null) {
-  const proxies = userInput.split(/\s+|\n+/).map(p => p.trim()).filter(Boolean);
-  const MAX_PROXIES = 20;
+async function checkProxyByUserInput(chatId, userInput, messageId) {
+  // Memisahkan input berdasarkan spasi atau enter
+  const proxies = userInput.split(/\s+|\n+/).map(proxy => proxy.trim()).filter(Boolean);
 
+  // Batasan maksimal proxy yang bisa diproses
+  const MAX_PROXIES = 20;
   if (proxies.length > MAX_PROXIES) {
-    return sendMessage(chatId, `❌ Terlalu banyak proxy. Maksimal ${MAX_PROXIES} proxy per permintaan.`, replyToMessageId);
+    return sendMessage(chatId, `❌ Terlalu banyak proxy. Maksimal ${MAX_PROXIES} proxy per permintaan.`, null, messageId);
   }
 
   if (proxies.length === 0 || proxies.some(proxy => !proxy.includes(':'))) {
-    return sendMessage(chatId, "❌ Format salah. Harap kirim dalam format ip:port, contoh:\n`139.59.104.29:443`\n`192.168.1.1:8080`", replyToMessageId, { parse_mode: "Markdown" });
+    return sendMessage(chatId, "❌ Format salah. Harap kirim dalam format ip:port, contoh:\n`139.59.104.29:443`\n`192.168.1.1:8080`", null, messageId);
   }
 
-  // Kirim pesan sementara dengan reply ke pesan user
+  // Kirim pesan sementara bahwa bot sedang memeriksa status proxy
   const processingMessage = await sendTemporaryMessage(chatId, `
-\`\`\`PROCESSING\nSedang memeriksa status proxy, mohon tunggu...\`\`\``, replyToMessageId);
+\`\`\`PROCESSING\nSedang memeriksa status proxy, mohon tunggu...\`\`\``, messageId);
 
-  let allStatusText = "```🔍Status:\n";
+  let allStatusText = `\`\`\`🔍Status:\n`;
 
   const checkPromises = proxies.map(async (proxyInput) => {
     const [ip, port] = proxyInput.split(':');
@@ -99,10 +101,8 @@ async function checkProxyByUserInput(chatId, userInput, replyToMessageId = null)
   });
 
   const results = await Promise.all(checkPromises);
-
   allStatusText += results.join("") + "```";
 
-  // Gantikan pesan sementara dengan hasil menggunakan editMessageText
   return editMessageText(chatId, processingMessage.message_id, allStatusText, {
     parse_mode: "MarkdownV2"
   });
@@ -315,29 +315,16 @@ unnes.ac.id.mstkkee3.biz.id
 }
 
 async function checkProxy2(proxy) {
-  try {
-    const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
-    if (!response.ok) throw new Error("API tidak merespons dengan benar");
+    try {
+        const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
+        if (!response.ok) throw new Error("API tidak merespons dengan benar");
 
-    const data = await response.json();
-    console.log("Hasil dari API:", data); // Tambahkan ini untuk melihat apa isi aslinya
-
-    const isActive = data.status === "ok" || data.result === "success" || data.latency !== undefined;
-    const delay = data.latency || data.ping || null;
-
-    return {
-      proxyStatus: isActive ? "ACTIVE" : "INACTIVE",
-      isp: data.org || data.isp || "-",
-      country: data.country || "",
-      city: data.city || "",
-      region: data.region || "",
-      flag: data.flag || "",
-      delay
-    };
-  } catch (error) {
-    console.error(`Gagal memeriksa proxy ${proxy.host}:${proxy.port} -`, error);
-    return null;
-  }
+        const data = await response.json();
+        return data && data.proxyStatus ? data : null;
+    } catch (error) {
+        console.error(`Gagal memeriksa proxy ${proxy.host}:${proxy.port} -`, error);
+        return null;
+    }
 }
 
 async function sendAllProxyStatus(chatId, messageId = null) {
