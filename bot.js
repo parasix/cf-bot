@@ -377,19 +377,21 @@ function generateUUID() {
 
 async function generateVlessConfig(chatId, proxyId, messageId) {
   const selectedProxy = proxies.find(p => p.id == proxyId);
-  if (!selectedProxy) return sendMessage(chatId, '❌ Proxy tidak ditemukan.');
+  if (!selectedProxy) {
+    return sendMessage(chatId, '❌ Proxy tidak ditemukan.', {}, messageId);
+  }
 
   const message = `
 \`\`\`METODE\nSILAHKAN PILIH METODE INJECT:
 \`\`\`
-  
   `;
   const keyboard = {
     inline_keyboard: [
       [
-        { text: 'WebSocket', callback_data: `method:ws:${proxyId}` },
+        { text: 'Tidak', callback_data: `method:no:${proxyId}` },
         { text: 'Wildcard', callback_data: `method:wc:${proxyId}` }
       ],
+      [{ text: 'SNI/TLS', callback_data: `method:sni:${proxyId}` }]
     ]
   };
 
@@ -421,12 +423,11 @@ async function handleMethodSelection(chatId, method, proxyId, messageId) {
         [{ text: 'zaintest.vuclip.com', callback_data: `wildcard:zaintest.vuclip.com:${proxyId}` }],
         [{ text: 'edu.ruangguru.com', callback_data: `wildcard:edu.ruangguru.com:${proxyId}` }],
         [{ text: 'api.midtrans.com', callback_data: `wildcard:api.midtrans.com:${proxyId}` }],
-        [{ text: 'quiz.int.vidio.com', callback_data: `wildcard:quiz.int.vidio.com:${proxyId}` }],
         [{ text: 'bakrie.ac.id', callback_data: `wildcard:bakrie.ac.id:${proxyId}` }],
         [{ text: 'blog.webex.com', callback_data: `wildcard:blog.webex.com:${proxyId}` }],
         [{ text: 'investors.spotify.com', callback_data: `wildcard:investors.spotify.com:${proxyId}` }],
         [{ text: 'investor.fb.com', callback_data: `wildcard:investor.fb.com:${proxyId}` }],
-        [{ text: 'untar.ac.id', callback_data: `wildcard:untar.ac.id:${proxyId}` }],
+        [{ text: 'help.viu.com', callback_data: `wildcard:help.viu.com:${proxyId}` }],
       ],
     };
 
@@ -434,6 +435,32 @@ async function handleMethodSelection(chatId, method, proxyId, messageId) {
       parse_mode: "Markdown",
       reply_markup: keyboard
     });
+  } else if (method === 'sni') {
+    // Tampilkan daftar SNI
+    const sniList = '🔹 *Pilih Salah Satu Subdomain:*';
+    const keyboard = {
+      inline_keyboard: [
+        [{ text: 'ava.game.naver.com', callback_data: `sni:ava.game.naver.com:${proxyId}` }],
+        [{ text: 'support.zoom.us', callback_data: `sni:support.zoom.us:${proxyId}` }],
+        [{ text: 'cache.netflix.com', callback_data: `sni:cache.netflix.com:${proxyId}` }],
+        [{ text: 'graph.instagram.com', callback_data: `sni:graph.instagram.com:${proxyId}` }],
+        [{ text: 'zaintest.vuclip.com', callback_data: `sni:zaintest.vuclip.com:${proxyId}` }],
+        [{ text: 'edu.ruangguru.com', callback_data: `sni:edu.ruangguru.com:${proxyId}` }],
+        [{ text: 'api.midtrans.com', callback_data: `sni:api.midtrans.com:${proxyId}` }],
+        [{ text: 'bakrie.ac.id', callback_data: `sni:bakrie.ac.id:${proxyId}` }],
+        [{ text: 'blog.webex.com', callback_data: `sni:blog.webex.com:${proxyId}` }],
+        [{ text: 'investors.spotify.com', callback_data: `sni:investors.spotify.com:${proxyId}` }],
+        [{ text: 'investor.fb.com', callback_data: `sni:investor.fb.com:${proxyId}` }],
+        [{ text: 'help.viu.com', callback_data: `sni:help.viu.com:${proxyId}` }],
+      ],
+    };
+
+    return await editMessageText(chatId, messageId, sniList, {
+      parse_mode: "Markdown",
+      reply_markup: keyboard
+    });
+  } else {
+    return await sendMessage(chatId, '❌ Metode tidak valid.', {}, messageId);
   }
 }
 
@@ -564,6 +591,77 @@ proxies:
   } catch (error) {
     const errorMsg = `❌ Gagal membuat konfigurasi:\n<pre>${error.message}</pre>`;
     console.error("generateConfigWithWildcard ERROR:", error);
+    return sendMessage(chatId, errorMsg, { parse_mode: "HTML" });
+  }
+}
+
+async function generateConfigWithSni(chatId, sni, proxyId, messageId) {
+  try {
+    const selectedProxy = proxies.find((p) => p.id == proxyId);
+    if (!selectedProxy) {
+      return sendMessage(chatId, '❌ Proxy tidak ditemukan.');
+    }
+
+    const uuid = generateUUID();
+  const bugServer = `${sni}.${servervless}`;
+    const vlessRawUrl = `vless://${uuid}@${servervless}:443?encryption=none&security=tls&sni=${bugServer}&type=ws&host=${bugServer}&path=${selectedProxy.path}#${selectedProxy.server}`;
+    
+const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(vlessRawUrl)}`;
+
+    // Hapus tombol salin kode, jadi keyboard kosong atau bisa dihapus juga reply_markup
+    await sendPhoto(chatId, qrUrl, {
+  caption: '𝗦𝗰𝗮𝗻 𝗱𝗶 𝗮𝗽𝗽 𝘃2𝗿𝗮𝘆𝗡𝗚, 𝗚𝗮𝘁𝗰𝗵𝗮𝗡𝗚, 𝗱𝘀𝘁',  // atau caption informatif
+  parse_mode: 'HTML'
+});
+
+const config = `
+𝗞𝗼𝗻𝗳𝗶𝗴𝘂𝗿𝗮𝘀𝗶 𝘃𝗹𝗲𝘀𝘀 𝗮𝗻𝗱𝗮 𝗯𝗲𝗿𝗵𝗮𝘀𝗶𝗹 𝗱𝗶𝗯𝘂𝗮𝘁
+𝗦𝗲𝗿𝘃𝗲𝗿 : \`${selectedProxy.server}\` 
+𝗣𝗮𝘁𝗵 :  \`${selectedProxy.path}\` 
+𝗠𝗲𝘁𝗼𝗱𝗲 : 𝗦𝗡𝗜/𝗧𝗟𝗦
+𝗦𝘂𝗯𝗱𝗼𝗺𝗮𝗶𝗻 : \`${sni}\`
+
+\`\`\`VLESS\n${vlessRawUrl}\`\`\`
+
+\`\`\`yaml
+proxies:  
+- name: ${selectedProxy.server}  
+  server: ${servervless}  
+  port: 443  
+  type: vless  
+  uuid: ${uuid}  
+  cipher: auto  
+  tls: true  
+  skip-cert-verify: true  
+  network: ws  
+  servername: ${bugServer}  
+  ws-opts:  
+    path: ${selectedProxy.path}
+    headers:  
+      Host: ${bugServer}  
+  udp: true\`\`\`
+  
+🛠️ *Cara Penggunaan:*  
+🔹 *VLESS:* Salin config dan gunakan di V2RayNG, Napsternet, dll.  
+🔹 *CLASH:* Gunakan config ini di BFR, CFM, CMFA, Clash Meta, Stash, dll.  
+🔹 *Optimasi:* Jika koneksi lemot, coba ganti SERVER/ISP.  
+
+💡 *Tips & Tricks:*  
+✅ Gunakan server terdekat untuk kecepatan maksimal  
+✅ Pastikan *mode TLS aktif* agar lebih aman.  
+
+╭━━━━━━━━━━━━━━━━━━━━━╮  
+┃  📞 *Need Help?* @Mstk3e !  
+┃  🚀 *Nikmati internet lebih cepat & aman!*  
+┃  🌐 *Join komunitas:* [@vless_bodong]  
+╰━━━━━━━━━━━━━━━━━━━━━╯  
+`;
+
+    return sendMessage(chatId, config, { parse_mode: "HTML" });
+
+  } catch (error) {
+    const errorMsg = `❌ Gagal membuat konfigurasi:\n<pre>${error.message}</pre>`;
+    console.error("generateConfigWithSniERROR:", error);
     return sendMessage(chatId, errorMsg, { parse_mode: "HTML" });
   }
 }
