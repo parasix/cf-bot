@@ -122,8 +122,8 @@ async function handleRequest(request) {
 
         if (userSession[chatId]?.method === "ws" && userSession[chatId]?.proxyId) {
           const proxyId = userSession[chatId].proxyId;
-          delete userSession[chatId];
           await new Promise((resolve) => setTimeout(resolve, 100));
+          delete userSession[chatId];
           await generateConfigWithBug(chatId, text, proxyId, messageId);
         } else {
           await handleMessage(text, chatId, messageId);
@@ -168,10 +168,31 @@ async function handleRequest(request) {
           await new Promise((resolve) => setTimeout(resolve, 2000));
           await deleteMessage(chatId, messageId);
           await generateConfigWithWildcard(chatId, wildcard, proxyId, messageId);
-        }
+
+        } else if (action === "sni" && dataParts.length === 3) {
+  const sni = dataParts[1];
+  const proxyId = dataParts[2];
+
+  // Validasi SNI
+  if (!/^[a-zA-Z0-9.-]+$/.test(sni)) {
+    await sendMessage(chatId, "SNI tidak valid.", { reply_to_message_id: messageId });
+    return new Response("OK");
+  }
+
+  // Feedback visual "processing..."
+  await editMessageText(chatId, messageId, "```RUNNING\nHarap menunggu, sedang memproses...\n```", {
+    parse_mode: "MarkdownV2",
+  });
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await deleteMessage(chatId, messageId); // ini yang hilang di versi kamu
+
+  await generateConfigWithSni(chatId, sni, proxyId, messageId);
+}
+
+        return new Response("OK");
       }
 
-      // ✅ Ini WAJIB untuk menghentikan SPAM
       return new Response("OK");
 
     } catch (err) {
@@ -275,7 +296,7 @@ untar.ac.id.mstkkee3.biz.id
   });
 }
 
-async function checkProxy(proxy) {
+async function checkProxy2(proxy) {
     try {
         const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
         if (!response.ok) throw new Error("API tidak merespons dengan benar");
@@ -310,7 +331,7 @@ async function sendAllProxyStatus(chatId, replyToMessageId = null) {
   { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/id-rmhwb' },
 ];
 
-  const results = await Promise.allSettled(proxies.map(checkProxy));
+  const results = await Promise.allSettled(proxies.map(checkProxy2));
 
   let statusText = `\`\`\`🔍Status:\n`;
 
