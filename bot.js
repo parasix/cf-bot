@@ -388,7 +388,7 @@ async function generateVlessConfig(chatId, proxyId, messageId) {
   const keyboard = {
     inline_keyboard: [
       [
-        { text: 'Tidak', callback_data: `method:no:${proxyId}` },
+        { text: 'Websocket', callback_data: `method:ws:${proxyId}` },
         { text: 'Wildcard', callback_data: `method:wc:${proxyId}` }
       ],
       [{ text: 'SNI/TLS', callback_data: `method:sni:${proxyId}` }]
