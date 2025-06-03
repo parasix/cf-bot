@@ -32,7 +32,7 @@ addEventListener('fetch', event => {
 });
 
 
-async function checkProxy(proxy) {
+async function checkProxy2(proxy) {
   try {
     const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
     const data = await response.json();
@@ -55,7 +55,7 @@ async function checkProxy(proxy) {
 }
 
 // Fungsi untuk memeriksa status proxy berdasarkan input pengguna (ip:port)
-async function checkProxyByUserInput(chatId, userInput, replyToMessageId = null) {
+async function checkProxy2ByUserInput(chatId, userInput, replyToMessageId = null) {
   const proxies = userInput.split(/\s+|\n+/).map(p => p.trim()).filter(Boolean);
   const MAX_PROXIES = 20;
 
