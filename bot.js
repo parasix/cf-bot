@@ -315,16 +315,29 @@ unnes.ac.id.mstkkee3.biz.id
 }
 
 async function checkProxy2(proxy) {
-    try {
-        const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
-        if (!response.ok) throw new Error("API tidak merespons dengan benar");
+  try {
+    const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
+    if (!response.ok) throw new Error("API tidak merespons dengan benar");
 
-        const data = await response.json();
-        return data && data.proxyStatus ? data : null;
-    } catch (error) {
-        console.error(`Gagal memeriksa proxy ${proxy.host}:${proxy.port} -`, error);
-        return null;
-    }
+    const data = await response.json();
+
+    // Pastikan kita olah data mentah dari API
+    const isActive = data.status === "ok" || data.result === "success" || data.latency !== undefined;
+    const delay = data.latency || data.ping || null;
+
+    return {
+      proxyStatus: isActive ? "ACTIVE" : "INACTIVE",
+      isp: data.org || data.isp || "-",
+      country: data.country || "",
+      city: data.city || "",
+      region: data.region || "",
+      flag: data.flag || "",
+      delay
+    };
+  } catch (error) {
+    console.error(`Gagal memeriksa proxy ${proxy.host}:${proxy.port} -`, error);
+    return null;
+  }
 }
 
 async function sendAllProxyStatus(chatId, messageId = null) {
