@@ -466,46 +466,55 @@ async function handleMethodSelection(chatId, method, proxyId, messageId) {
 
 
 async function generateConfigWithBug(chatId, bug, proxyId, messageId) {
-  const selectedProxy = proxies.find(p => p.id == proxyId);
-  if (!selectedProxy) return sendMessage(chatId, '❌ Proxy tidak ditemukan.');
-  
-  const processingMessage = await sendTemporaryMessage(chatId, `
+  try {
+    const selectedProxy = proxies.find(p => p.id == proxyId);
+    if (!selectedProxy) return sendMessage(chatId, '❌ Proxy tidak ditemukan.');
+
+    const processingMessage = await sendTemporaryMessage(chatId, `
 \`\`\`RUNNING\nHarap menunggu, sedang memproses...\`\`\``, messageId);
 
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    await deleteMessage(chatId, processingMessage.message_id);
 
-// Simulasi waktu tunggu (3 detik)
-await new Promise(resolve => setTimeout(resolve, 3000));
+    const uuid = generateUUID();
+    const bugServer = `${servervless}`
 
-await deleteMessage(chatId, processingMessage.message_id);
-
-const uuid = generateUUID();
+    const vlessRawUrl = `vless://${uuid}@${bug}:443?encryption=none&security=tls&sni=${bugServer}&type=ws&host=${bugServer}&path=${selectedProxy.path}#${selectedProxy.server}`;
+    
+const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(vlessRawUrl)}`;
+    
+    await sendPhoto(chatId, qrUrl, {
+  caption: '𝗦𝗰𝗮𝗻 𝗱𝗶 𝗮𝗽𝗽 𝘃2𝗿𝗮𝘆𝗡𝗚, 𝗚𝗮𝘁𝗰𝗵𝗮𝗡𝗚, 𝗱𝘀𝘁',  // atau caption informatif
+  parse_mode: 'Markdown'
+});
 
 const config = `
-𝗞𝗼𝗻𝗳𝗶𝗴𝘂𝗿𝗮𝘀𝗶 𝘃𝗹𝗲𝘀𝘀 𝗮𝗻𝗱𝗮 𝗯𝗲𝗿𝗵𝗮𝘀𝗶𝗹 𝗱𝗶𝗯𝘂𝗮𝘁  
-𝗦𝗲𝗿𝘃𝗲𝗿 : \`${selectedProxy.server}\`  
+𝗞𝗼𝗻𝗳𝗶𝗴𝘂𝗿𝗮𝘀𝗶 𝘃𝗹𝗲𝘀𝘀 𝗮𝗻𝗱𝗮 𝗯𝗲𝗿𝗵𝗮𝘀𝗶𝗹 𝗱𝗶𝗯𝘂𝗮𝘁
+𝗦𝗲𝗿𝘃𝗲𝗿 : \`${selectedProxy.server}\`
+𝗣𝗮𝘁𝗵 :  \`${selectedProxy.path}\`
 𝗠𝗲𝘁𝗼𝗱𝗲 : 𝘄𝗲𝗯𝘀𝗼𝗰𝗸𝗲𝘁  
-𝗕𝘂𝗴 𝗪𝗦 : \`${bug}\`  
+𝗕𝘂𝗴 𝗪𝗦 : \`${bug}\`
 
-\`\`\`VLESS\nvless://${uuid}@${bug}:443?encryption=none&security=tls&sni=${servervless}&type=ws&host=${servervless}&path=/${selectedProxy.host}-${selectedProxy.port}#${selectedProxy.server}\`\`\`
+\`\`\`VLESS\n${vlessRawUrl}\`\`\`
 
 \`\`\`yaml
-proxies:  
-- name: ${selectedProxy.server}  
-  server: ${bug}  
-  port: 443  
-  type: vless  
-  uuid: ${uuid}  
-  cipher: auto  
-  tls: true  
-  skip-cert-verify: true  
-  network: ws  
-  servername: ${servervless}  
-  ws-opts:  
-    path: /${selectedProxy.host}-${selectedProxy.port}  
-    headers:  
-      Host: ${servervless}  
+proxies:
+- name: ${selectedProxy.server}
+  server: ${bug}
+  port: 443
+  type: vless
+  uuid: ${uuid}
+  cipher: auto
+  tls: true
+  skip-cert-verify: true
+  network: ws
+  servername: ${servervless}
+  ws-opts:
+    path: ${selectedProxy.path}
+    headers:
+      Host: ${servervless}
   udp: true\`\`\`
-  
+
 🛠️ *Cara Penggunaan:*  
 🔹 *VLESS:* Salin config dan gunakan di V2RayNG, Napsternet, dll.  
 🔹 *CLASH:* Gunakan config ini di BFR, CFM, CMFA, Clash Meta, Stash, dll.  
@@ -519,12 +528,18 @@ proxies:
 ┃  📞 *Need Help?* @Mstk3e !  
 ┃  🚀 *Nikmati internet lebih cepat & aman!*  
 ┃  🌐 *Join komunitas:* [@vless_bodong]  
-╰━━━━━━━━━━━━━━━━━━━━━╯  
+╰━━━━━━━━━━━━━━━━━━━━━╯
 `;
 
-return sendMessage(chatId, config, messageId, {
-    parse_mode: "Markdown"
-  });
+    return sendMessage(chatId, config, messageId, { parse_mode: "Markdown"
+    });
+
+  } catch (error) {
+    console.error("generateConfigWithBug ERROR:", error);
+    return sendMessage(chatId, `❌ Gagal membuat konfigurasi:\n\`\`\`\n${error.message}\n\`\`\``, {
+      parse_mode: "Markdown"
+    });
+  }
 }
 
 
