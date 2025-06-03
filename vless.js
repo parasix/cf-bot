@@ -15,7 +15,7 @@ const tags = `#Group Telegram : https://t.me/mistakkee_bot
 // Contoh penggunaan dalam handler utama
 export default async function handler(request) {
   try {
-    const domainvless = request.headers.get("Host");
+    const domainvless = request.headers.get("Host")
                
  if (request.url.endsWith('/favicon.ico')) {
         // Link ke gambar yang ingin dijadikan favicon
