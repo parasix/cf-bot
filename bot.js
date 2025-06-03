@@ -5,21 +5,21 @@ const RATE_LIMIT_SECONDS = 10;
 
 // Daftar proxy yang tersedia
 const proxies = [
-  { id: 1, server: '(SG) Digitalocean, LLC 🇸🇬', host: '178.128.80.43', port: 443, path: '/mstk3e' },
-  { id: 2, server: '(SG) Oracle Corporation 🇸🇬', host: '213.35.108.135', port: 12596, path: '/mstk3e' },
-  { id: 3, server: '(SG) Godaddy.com, LLC 🇸🇬', host: '97.74.82.87', port: 45837, path: '/mstk3e' },
-  { id: 4, server: '(SG) Amazon.com, Inc 🇸🇬', host: '13.228.142.218', port: 443, path: '/mstk3e' },
-  { id: 5, server: '(SG) Tcloudnet 🇸🇬', host: '154.91.84.10', port: 8443, path: '/mstk3e' },
-  { id: 6, server: '(SG) AKILE LTD 🇸🇬', host: '185.81.29.113', port: 8080, path: '/mstk3e' },
-  { id: 7, server: '(SG) LEASEWEB SINGAPORE 🇸🇬', host: '167.253.158.63', port: 2053, path: '/mstk3e' },
-  { id: 8, server: '(SG) Hetzner Online 🇸🇬', host: '5.223.49.4', port: 2053, path: '/mstk3e' },
-  { id: 9, server: '(SG) Regxa Company🇸🇬', host: '206.206.76.208', port: 2053, path: '/mstk3e' },
-  { id: 10, server: '(SG) OVH SAS 🇸🇬', host: '51.79.158.58', port: 8443, path: '/mstk3e' },
-  { id: 11, server: '(SG) Melbikomas Uab 🇸🇬', host: '91.192.81.154', port: 2053, path: '/mstk3e' },
-  { id: 12, server: '(ID) Pt Pusat Media 🇮🇩', host: '103.6.207.108', port: 8080, path: '/mstk3e' },
-  { id: 13, server: '(ID) PT. Telekomunikasi 🇮🇩', host: '36.95.152.58', port: 12137, path: '/mstk3e' },
-  { id: 14, server: '(ID) Amazon.com, Inc 🇮🇩', host: '43.218.77.16', port: 443, path: '/mstk3e' },
-  { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/mstk3e' },
+  { id: 1, server: '(SG) Digitalocean, LLC 🇸🇬', host: '178.128.80.43', port: 443, path: '/sg-do' },
+  { id: 2, server: '(SG) Oracle Corporation 🇸🇬', host: '213.35.108.135', port: 12596, path: '/sg-orcl' },
+  { id: 3, server: '(SG) Godaddy.com, LLC 🇸🇬', host: '97.74.82.87', port: 45837, path: '/sg-gddy' },
+  { id: 4, server: '(SG) Amazon.com, Inc 🇸🇬', host: '13.228.142.218', port: 443, path: '/sg-amz' },
+  { id: 5, server: '(SG) Tcloudnet 🇸🇬', host: '154.91.84.10', port: 8443, path: '/sg-tcloud' },
+  { id: 6, server: '(SG) AKILE LTD 🇸🇬', host: '185.81.29.113', port: 8080, path: '/sg-akl' },
+  { id: 7, server: '(SG) LEASEWEB SINGAPORE 🇸🇬', host: '167.253.158.63', port: 2053, path: '/sg-lswb' },
+  { id: 8, server: '(SG) Hetzner Online 🇸🇬', host: '5.223.49.4', port: 2053, path: '/sg-hzr' },
+  { id: 9, server: '(SG) Regxa Company🇸🇬', host: '206.206.76.208', port: 2053, path: '/sg-rgxa' },
+  { id: 10, server: '(SG) OVH SAS 🇸🇬', host: '51.79.158.58', port: 8443, path: '/sg-ovh' },
+  { id: 11, server: '(SG) Melbikomas Uab 🇸🇬', host: '91.192.81.154', port: 2053, path: '/sg-melbi' },
+  { id: 12, server: '(ID) Pt Pusat Media 🇮🇩', host: '103.6.207.108', port: 8080, path: '/id-pusat' },
+  { id: 13, server: '(ID) PT. Telekomunikasi 🇮🇩', host: '36.95.152.58', port: 12137, path: '/id-tksi' },
+  { id: 14, server: '(ID) Amazon.com, Inc 🇮🇩', host: '43.218.77.16', port: 443, path: '/id-amz' },
+  { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/id-rmhwb' },
 ];
   
 // Token bot Telegram
@@ -314,7 +314,7 @@ unnes.ac.id.mstkkee3.biz.id
   return sendMessage(chatId, sniList, { parse_mode: 'Markdown' }, messageId);
 }
 
-async function checkProxy2(proxy) {
+async function checkProxy(proxy) {
     try {
         const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
         if (!response.ok) throw new Error("API tidak merespons dengan benar");
@@ -332,24 +332,24 @@ async function sendAllProxyStatus(chatId, messageId = null) {
 \`\`\`PROCESSING\nSedang memeriksa semua status proxy, harap tunggu sebentar...\`\`\``, messageId);
 
   const proxies = [
-  { id: 1, server: '(SG) Digitalocean, LLC 🇸🇬', host: '178.128.80.43', port: 443, path: '/mstk3e' },
-  { id: 2, server: '(SG) Oracle Corporation 🇸🇬', host: '213.35.108.135', port: 12596, path: '/mstk3e' },
-  { id: 3, server: '(SG) Godaddy.com, LLC 🇸🇬', host: '97.74.82.87', port: 45837, path: '/mstk3e' },
-  { id: 4, server: '(SG) Amazon.com, Inc 🇸🇬', host: '13.228.142.218', port: 443, path: '/mstk3e' },
-  { id: 5, server: '(SG) Tcloudnet 🇸🇬', host: '154.91.84.10', port: 8443, path: '/mstk3e' },
-  { id: 6, server: '(SG) AKILE LTD 🇸🇬', host: '185.81.29.113', port: 8080, path: '/mstk3e' },
-  { id: 7, server: '(SG) LEASEWEB SINGAPORE 🇸🇬', host: '167.253.158.63', port: 2053, path: '/mstk3e' },
-  { id: 8, server: '(SG) Hetzner Online 🇸🇬', host: '5.223.49.4', port: 2053, path: '/mstk3e' },
-  { id: 9, server: '(SG) Regxa Company🇸🇬', host: '206.206.76.208', port: 2053, path: '/mstk3e' },
-  { id: 10, server: '(SG) OVH SAS 🇸🇬', host: '51.79.158.58', port: 8443, path: '/mstk3e' },
-  { id: 11, server: '(SG) Melbikomas Uab 🇸🇬', host: '91.192.81.154', port: 2053, path: '/mstk3e' },
-  { id: 12, server: '(ID) Pt Pusat Media 🇮🇩', host: '103.6.207.108', port: 8080, path: '/mstk3e' },
-  { id: 13, server: '(ID) PT. Telekomunikasi 🇮🇩', host: '36.95.152.58', port: 12137, path: '/mstk3e' },
-  { id: 14, server: '(ID) Amazon.com, Inc 🇮🇩', host: '43.218.77.16', port: 443, path: '/mstk3e' },
-  { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/mstk3e' },
+  { id: 1, server: '(SG) Digitalocean, LLC 🇸🇬', host: '178.128.80.43', port: 443, path: '/sg-do' },
+  { id: 2, server: '(SG) Oracle Corporation 🇸🇬', host: '213.35.108.135', port: 12596, path: '/sg-orcl' },
+  { id: 3, server: '(SG) Godaddy.com, LLC 🇸🇬', host: '97.74.82.87', port: 45837, path: '/sg-gddy' },
+  { id: 4, server: '(SG) Amazon.com, Inc 🇸🇬', host: '13.228.142.218', port: 443, path: '/sg-amz' },
+  { id: 5, server: '(SG) Tcloudnet 🇸🇬', host: '154.91.84.10', port: 8443, path: '/sg-tcloud' },
+  { id: 6, server: '(SG) AKILE LTD 🇸🇬', host: '185.81.29.113', port: 8080, path: '/sg-akl' },
+  { id: 7, server: '(SG) LEASEWEB SINGAPORE 🇸🇬', host: '167.253.158.63', port: 2053, path: '/sg-lswb' },
+  { id: 8, server: '(SG) Hetzner Online 🇸🇬', host: '5.223.49.4', port: 2053, path: '/sg-hzr' },
+  { id: 9, server: '(SG) Regxa Company🇸🇬', host: '206.206.76.208', port: 2053, path: '/sg-rgxa' },
+  { id: 10, server: '(SG) OVH SAS 🇸🇬', host: '51.79.158.58', port: 8443, path: '/sg-ovh' },
+  { id: 11, server: '(SG) Melbikomas Uab 🇸🇬', host: '91.192.81.154', port: 2053, path: '/sg-melbi' },
+  { id: 12, server: '(ID) Pt Pusat Media 🇮🇩', host: '103.6.207.108', port: 8080, path: '/id-pusat' },
+  { id: 13, server: '(ID) PT. Telekomunikasi 🇮🇩', host: '36.95.152.58', port: 12137, path: '/id-tksi' },
+  { id: 14, server: '(ID) Amazon.com, Inc 🇮🇩', host: '43.218.77.16', port: 443, path: '/id-amz' },
+  { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/id-rmhwb' },
 ];
 
-  const results = await Promise.allSettled(proxies.map(checkProxy2));
+  const results = await Promise.allSettled(proxies.map(checkProxy));
 
   let statusText = `\`\`\`🔍Status:\n`;
 
