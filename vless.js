@@ -1,4 +1,4 @@
-import { connect } from 'cloudflare:sockets';
+import { connect } from 'cloudflare:sockets'
 
 let listProxy;
 let proxyIP;
