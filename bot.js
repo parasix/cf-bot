@@ -192,7 +192,7 @@ async function handleMessage(text, chatId, messageId) {
   if (text === "/donasi") return await handleCommand("/donasi", chatId, messageId);
 
   if (text.includes(":")) {
-    return await checkProxyByUserInput(chatId, text, messageId);
+    return await checkProxy2ByUserInput(chatId, text, messageId);
   }
 }
 
