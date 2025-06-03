@@ -275,7 +275,7 @@ untar.ac.id.mstkkee3.biz.id
   });
 }
 
-async function checkProxy2(proxy) {
+async function checkProxy(proxy) {
     try {
         const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
         if (!response.ok) throw new Error("API tidak merespons dengan benar");
@@ -310,7 +310,7 @@ async function sendAllProxyStatus(chatId, replyToMessageId = null) {
   { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/id-rmhwb' },
 ];
 
-  const results = await Promise.allSettled(proxies.map(checkProxy2));
+  const results = await Promise.allSettled(proxies.map(checkProxy));
 
   let statusText = `\`\`\`🔍Status:\n`;
 
