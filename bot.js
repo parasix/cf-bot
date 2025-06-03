@@ -170,25 +170,25 @@ async function handleRequest(request) {
           await generateConfigWithWildcard(chatId, wildcard, proxyId, messageId);
 
         } else if (action === "sni" && dataParts.length === 3) {
-  const sni = dataParts[1];
-  const proxyId = dataParts[2];
+          const sni = dataParts[1];
+          const proxyId = dataParts[2];
 
-  // Validasi SNI
-  if (!/^[a-zA-Z0-9.-]+$/.test(sni)) {
-    await sendMessage(chatId, "SNI tidak valid.", { reply_to_message_id: messageId });
-    return new Response("OK");
-  }
+          // Validasi SNI
+          if (!/^[a-zA-Z0-9.-]+$/.test(sni)) {
+            await sendMessage(chatId, "SNI tidak valid.", { reply_to_message_id: messageId });
+            return new Response("OK");
+          }
 
-  // Feedback visual "processing..."
-  await editMessageText(chatId, messageId, "```RUNNING\nHarap menunggu, sedang memproses...\n```", {
-    parse_mode: "MarkdownV2",
-  });
+          // Feedback visual "processing..."
+          await editMessageText(chatId, messageId, "```RUNNING\nHarap menunggu, sedang memproses...\n```", {
+            parse_mode: "MarkdownV2",
+          });
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  await deleteMessage(chatId, messageId); // ini yang hilang di versi kamu
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          await deleteMessage(chatId, messageId); // Ini yang hilang di versi sebelumnya
 
-  await generateConfigWithSni(chatId, sni, proxyId, messageId);
-}
+          await generateConfigWithSni(chatId, sni, proxyId, messageId);
+        }
 
         return new Response("OK");
       }
