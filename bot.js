@@ -108,6 +108,7 @@ async function handleMessage(text, chatId, messageId) {
   if (text === "/listwildcard") return await sendWildcardList(chatId, messageId);
   if (text === "/allstatus") return await sendAllProxyStatus(chatId, messageId);
   if (text === "/donasi") return await handleCommand("/donasi", chatId, messageId);
+  }
 }
 
 // Fungsi menangani perintah tambahan
