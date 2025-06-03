@@ -5,31 +5,36 @@ let proxyIP;
 let proxyPort;
 let randomProxy;
 const VARIABLE = 'LISTPROXY';
-const linkTarget = 'https://t.me/mistakkee_bot';
+const linkTarget = 'https://t.me/Mstk3e_bot';
 let domainvless;
-const tags = `#Group Telegram : https://t.me/mistakkee_bot
+const tags = `#Group Telegram : https://t.me/Mstk3e_bot
 #Author : https://t.me/trust_bodong
 
 `;
 
 // Contoh penggunaan dalam handler utama
-export default async function handler(request) {
-  try {
-    const domainvless = request.headers.get("Host");
-    
-    if (request.url.endsWith('/favicon.ico')) {
-      const imageUrl = 'https://raw.githubusercontent.com/parasix/juju/main/JP-Kikuchi-Hina.jpg';
-      const imageResponse = await fetch(imageUrl);
+export default {
+    async fetch(request, env, ctx) {
+        try {
+        domainvless = request.headers.get("Host")
+               
+ if (request.url.endsWith('/favicon.ico')) {
+        // Link ke gambar yang ingin dijadikan favicon
+        const imageUrl = 'https://raw.githubusercontent.com/parasix/juju/main/JP-Kikuchi-Hina.jpg';
+        
+        // Fetch gambar dari URL
+        const imageResponse = await fetch(imageUrl);
 
-      if (imageResponse.ok) {
-        const imageBlob = await imageResponse.blob();
-        return new Response(imageBlob, {
-          status: 200,
-          headers: { 'Content-Type': 'image/jpeg' }
-        });
-      } else {
-        return new Response(null, { status: 404 });
-      }
+        if (imageResponse.ok) {
+            const imageBlob = await imageResponse.blob();
+
+            return new Response(imageBlob, {
+                status: 200,
+                headers: { 'Content-Type': 'image/jpeg' }  // Ganti dengan tipe file yang sesuai (image/png, image/jpeg, dll)
+            });
+        } else {
+            return new Response(null, { status: 404 }); // Jika gambar tidak ditemukan
+        }
     }
     
         listProxy = JSON.parse(env[VARIABLE]);               
