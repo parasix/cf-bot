@@ -314,7 +314,7 @@ unnes.ac.id.mstkkee3.biz.id
   return sendMessage(chatId, sniList, { parse_mode: 'Markdown' }, messageId);
 }
 
-async function checkProxy(proxy) {
+async function checkProxy2(proxy) {
     try {
         const response = await fetch(`https://api.bodong.workers.dev/?key=masbodong&ip=${proxy.host}:${proxy.port}`);
         if (!response.ok) throw new Error("API tidak merespons dengan benar");
@@ -349,7 +349,7 @@ async function sendAllProxyStatus(chatId, messageId = null) {
   { id: 15, server: '(ID) Rumahweb 🇮🇩', host: '203.194.112.119', port: 8443, path: '/mstk3e' },
 ];
 
-  const results = await Promise.allSettled(proxies.map(checkProxy));
+  const results = await Promise.allSettled(proxies.map(checkProxy2));
 
   let statusText = `\`\`\`🔍Status:\n`;
 
