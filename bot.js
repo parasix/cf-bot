@@ -320,8 +320,8 @@ async function checkProxy2(proxy) {
     if (!response.ok) throw new Error("API tidak merespons dengan benar");
 
     const data = await response.json();
+    console.log("Hasil dari API:", data); // Tambahkan ini untuk melihat apa isi aslinya
 
-    // Pastikan kita olah data mentah dari API
     const isActive = data.status === "ok" || data.result === "success" || data.latency !== undefined;
     const delay = data.latency || data.ping || null;
 
